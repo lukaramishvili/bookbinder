@@ -1,22 +1,45 @@
 <template>
     <div id="app">
-        <img src="./assets/logo.png">
-        <HelloWorld/>
+        <!-- <img src="./assets/logo.png"> -->
+        <PageEditor :page="page" />
     </div>
 </template>
 
 <script>
- import HelloWorld from './components/HelloWorld'
+ import PageEditor from './components/PageEditor'
  
  export default {
      name: 'App',
      components: {
-         HelloWorld
+         PageEditor,
+     },
+     data(){
+         return {
+             page: {
+                 id: 30,
+                 elements: [
+                     {
+                         name: 'el1',
+                         x: 100,
+                         y: 30,
+                         w: 80,
+                         h: 70,
+                     },
+                     {
+                         name: 'el2',
+                         x: 250,
+                         y: 60,
+                         w: 40,
+                         h: 70,
+                     }
+                 ],
+             },
+         };
      }
  }
 </script>
 
-<style>
+<style lang="scss">
  #app {
      font-family: 'Avenir', Helvetica, Arial, sans-serif;
      -webkit-font-smoothing: antialiased;
