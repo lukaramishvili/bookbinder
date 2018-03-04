@@ -1,5 +1,5 @@
 <template>
-    <div class="page-editor" :data-page-id="page_id">
+    <div class="page-editor" :data-page-id="page.id" :style="'background-image: url('+page.scene_bg+');'">
         <button type="button" class="add-btn" @click="addLayer()">დამატება</button>
         <button type="button" class="save-btn" @click="save()">დამახსოვრება</button>
         <template v-for="l in page.layers" v-bind="l">
@@ -26,29 +26,34 @@
                   }*/
          }
      },
+     beforeUpdate(){
+         console.clear();
+     },
      data() {
+         //this._props.page_id
          return {
              page: {
                  id: 30,
                  page_number: 1,
+                 scene_bg: './assets/logo.png',
                  layers: [
                      {
                          id: 1,
                          name: 'el1',
-                         x: 100,
+                         x: 500,
                          y: 30,
-                         w: 80,
-                         h: 70,
+                         w: 140,
+                         h: 100,
                          z: 1,
                          bg: Colors.hexRandom(),
                      },
                      {
                          id: 2,
                          name: 'el2',
-                         x: 250,
+                         x: 750,
                          y: 60,
-                         w: 40,
-                         h: 70,
+                         w: 200,
+                         h: 120,
                          z: 2,
                          bg: Colors.hexRandom(),
                      }
@@ -57,12 +62,14 @@
          };
      },
      methods: {
+         zMin(){ return this.page.layers.reduce((zMin, l2) => Math.min(zMin, l2.z), 0); },
+         zMax(){ return this.page.layers.reduce((zMax, l2) => Math.max(zMax, l2.z), 0); },
          zNewLayer(){
-             return 1 + this.page.layers.reduce((zMax, l2) => Math.max(zMax, l2.z), 0);
+             return 1 + this.zMax();
          },
          genLayer(){
              return {
-                 id: (new Date()).getTime(), name: 'new1', x: 0, y:0, w:100, h:80,
+                 id: this.page.layers.length + 1, name: 'new1', x: 50, y: 50, w:100, h:80,
                  z: this.zNewLayer(), bg: Colors.hexRandom(),
              };
          },
@@ -73,8 +80,12 @@
          removeLayer(layer){
              this.page.layers = this.page.layers.filter(l => l.id != layer.id);
          },
-         arrangeLayer(layer, direction, moveFurthest){
-             console.log(arguments);
+         arrangeLayer(layer, direction, moveFurthest){console.log(arguments);
+             if(direction == 'up'){
+                 layer.z = 1 + (moveFurthest ? this.zMax() : this.z);
+             } else {
+                 layer.z = -1 + (moveFurthest ? this.zMin() : this.z);
+             }
          },
          save(){
              //ajax save

@@ -1,4 +1,6 @@
 
+import invertColor from '../../node_modules/invert-color/lib/invert';
+
 export default {
     padZero(str, len) {
         len = len || 2;
@@ -30,23 +32,10 @@ export default {
         return { r, g, b };
     },
     invertRGB(r, g, b, bw) {
-        if (bw) {
-            // http://stackoverflow.com/a/3943023/112731
-            [r,g,b] = ((r * 0.299 + g * 0.587 + b * 0.114) > 186)
-                ? [0,0,0]
-                : [255,255,255];
-        } else {
-            // invert color components
-            r = (255 - r).toString(16);
-            g = (255 - g).toString(16);
-            b = (255 - b).toString(16);
-        }
-        return { r, g, b };
+        return invertColor({ r, g, b }, bw);
     },
     invertHex(hex, bw) {
-        var rgb = this.rgbFromHex(hex);
-        var result = this.invertRGB(rgb.r,rgb.g,rgb.b,bw);
-        return this.hexFromRGB(result);
+        return invertColor(hex, bw);
     },
     componentRandom(){
         return Math.round(Math.random()*255);
@@ -62,8 +51,7 @@ export default {
     hexRandom() {
         return this.hexFromRGB(this.componentsRandom());
     },
-    invert(color){
-        //TODO detect hex or rgb() or rgb{} and call the appropriate function
-        return this.invertHex(color);
+    invert(color, bw){
+        return invertColor(color, bw);
     },
 }
