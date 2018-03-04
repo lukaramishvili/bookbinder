@@ -99,6 +99,7 @@ module.exports = {
                     fallback: "style-loader"
                 })
             },
+            // doesn't work
             /*{
                 test: /\.(png|jp(e*)g|svg)$/,
                 use: [{
@@ -111,6 +112,7 @@ module.exports = {
             },*/
         ]
     },
+    // doesn't work
     plugins: [
         new CopyWebpackPlugin([
             {from:'src/assets',to:'img'} 

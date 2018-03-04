@@ -1,10 +1,9 @@
 <template>
     <div class="page-editor" :data-page-id="page.id" :style="'background-image: url('+page.scene_bg+');'">
-        <img alt="" :src="page.scene_bg" />
         <button type="button" class="add-btn" @click="addLayer()">დამატება</button>
         <button type="button" class="save-btn" @click="save()">დამახსოვრება</button>
         <template v-for="l in page.layers" v-bind="l">
-            <Layer :layer="l" @remove-layer="removeLayer(l)" @bring-front="arrangeLayer(l, ...arguments)"></Layer>
+            <Layer :layer="l" @remove-layer="removeLayer(l)" @arrange="arrangeLayer(l, ...arguments)"></Layer>
         </template>
     </div>
 </template>
@@ -36,7 +35,7 @@
              page: {
                  id: 30,
                  page_number: 1,
-                 scene_bg: '/static/img/pg_bg_30.png',
+                 scene_bg: 'http://localhost/bookulus/src/assets/p/pg_bg_30.png',
                  layers: [
                      {
                          id: 1,
@@ -81,11 +80,11 @@
          removeLayer(layer){
              this.page.layers = this.page.layers.filter(l => l.id != layer.id);
          },
-         arrangeLayer(layer, direction, moveFurthest){console.log(arguments);
+         arrangeLayer(layer, direction, moveFurthest){console.log(layer.z);
              if(direction == 'up'){
-                 layer.z = 1 + (moveFurthest ? this.zMax() : this.z);
+                 layer.z = 1 + (moveFurthest ? this.zMax() : layer.z);
              } else {
-                 layer.z = -1 + (moveFurthest ? this.zMin() : this.z);
+                 layer.z = Math.max(1, -1 + (moveFurthest ? this.zMin() : layer.z));
              }
          },
          save(){
@@ -97,9 +96,22 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-.page-editor {
-    position: relative; height: 300px; border: 1px dotted gray; margin-bottom: 30px;
-}
+ @mixin ratio($x: 1, $y: 1, $contentselector: ".nothing"){
+     position: relative;
+     &:before {
+	 content: ""; display: block;
+	 padding-top: percentage($y/$x);
+	 pointer-events: none;
+     }
+     #{unquote($contentselector)} {
+	 position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+     }
+ }
+ .page-editor {
+     position: relative; border: 1px dotted gray; margin-bottom: 30px;
+     background-size: 100% 100%; background-position: left top;
+     @include ratio(2.83);
+ }
 .add-btn {
     position: absolute; right: calc(50% + 5px); top: calc(100% + 5px);
 }

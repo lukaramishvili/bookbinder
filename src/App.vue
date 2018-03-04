@@ -1,6 +1,5 @@
 <template>
     <div id="app">
-        <img src="./assets/p/pg_bg_30.png" style="display:none;">
         <PageEditor :page_id="page_id" />
     </div>
 </template>
