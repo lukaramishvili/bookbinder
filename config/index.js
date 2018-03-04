@@ -6,6 +6,8 @@ const path = require('path')
 
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
 const extractSass = new ExtractTextPlugin({
     filename: "[name].[contenthash].css",
     disable: process.env.NODE_ENV === "development"
@@ -110,6 +112,9 @@ module.exports = {
         ]
     },
     plugins: [
+        new CopyWebpackPlugin([
+            {from:'src/assets',to:'img'} 
+        ]),
         extractSass
     ]
 }

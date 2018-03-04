@@ -36,7 +36,7 @@
              page: {
                  id: 30,
                  page_number: 1,
-                 scene_bg: '../assets/logo.png',
+                 scene_bg: '/static/img/pg_bg_30.png',
                  layers: [
                      {
                          id: 1,
