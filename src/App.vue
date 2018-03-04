@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <!-- <img src="./assets/logo.png"> -->
-        <PageEditor :page="page" />
+        <PageEditor :page_id="page_id" />
     </div>
 </template>
 
@@ -15,37 +15,19 @@
      },
      data(){
          return {
-             page: {
-                 id: 30,
-                 elements: [
-                     {
-                         name: 'el1',
-                         x: 100,
-                         y: 30,
-                         w: 80,
-                         h: 70,
-                     },
-                     {
-                         name: 'el2',
-                         x: 250,
-                         y: 60,
-                         w: 40,
-                         h: 70,
-                     }
-                 ],
-             },
+             page_id: 30,
          };
      }
  }
 </script>
 
 <style lang="scss">
+ html, body { margin: 0; padding: 0; }
  #app {
      font-family: 'Avenir', Helvetica, Arial, sans-serif;
      -webkit-font-smoothing: antialiased;
      -moz-osx-font-smoothing: grayscale;
      text-align: center;
      color: #2c3e50;
-     margin-top: 60px;
  }
 </style>
