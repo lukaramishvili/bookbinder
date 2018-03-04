@@ -83,18 +83,31 @@ module.exports = {
         bundleAnalyzerReport: process.env.npm_config_report
     },
     module: {
-        rules: [{
-            test: /\.scss$/,
-            use: extractSass.extract({
+        rules: [
+            {
+                test:/\.(s*)css$/,
+                //["style", "css", "sass?sourceMap"]
+                use: extractSass.extract({
+                    use: [{
+                        loader: "css-loader"
+                    }, {
+                        loader: "sass-loader"
+                    }],
+                    // use style-loader in development
+                    fallback: "style-loader"
+                })
+            },
+            /*{
+                test: /\.(png|jp(e*)g|svg)$/,
                 use: [{
-                    loader: "css-loader"
-                }, {
-                    loader: "sass-loader"
-                }],
-                // use style-loader in development
-                fallback: "style-loader"
-            })
-        }]
+                    loader: 'url-loader',
+                    options: { 
+                        limit: 8000, // Convert images < 8kb to base64 strings
+                        name: 'img/[hash]-[name].[ext]'
+                    } 
+                }]
+            },*/
+        ]
     },
     plugins: [
         extractSass

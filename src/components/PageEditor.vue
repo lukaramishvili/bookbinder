@@ -1,5 +1,6 @@
 <template>
     <div class="page-editor" :data-page-id="page.id" :style="'background-image: url('+page.scene_bg+');'">
+        <img alt="" :src="page.scene_bg" />
         <button type="button" class="add-btn" @click="addLayer()">დამატება</button>
         <button type="button" class="save-btn" @click="save()">დამახსოვრება</button>
         <template v-for="l in page.layers" v-bind="l">
@@ -35,7 +36,7 @@
              page: {
                  id: 30,
                  page_number: 1,
-                 scene_bg: './assets/logo.png',
+                 scene_bg: '../assets/logo.png',
                  layers: [
                      {
                          id: 1,
