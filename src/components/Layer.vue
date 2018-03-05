@@ -43,7 +43,9 @@
         </button>
         <!-- end of pos:abs action buttons; start content -->
         <div class="draggable-content">
-            <template v-if="layer.type == 'text'" v-html="layer.textContent"></template>
+            <template v-if="layer.type == 'text'">
+                <div v-html="layer.textContent"></div>
+            </template>
             <template v-if="layer.type == 'image'">
                 <img v-if="layer.imgSrc" :src="layer.imgSrc" />
             </template>
@@ -111,6 +113,13 @@
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
+<style lang="scss">
+ /* need to be unscoped - .handle's are inside .vue-draggable */
+ .draggable {
+     /* handles are awkward when editing content */
+     &.is-editing { .handle { visibility: hidden; } }
+ }
+</style>
 <style scoped lang="scss">
  @mixin abs($left, $top: $left){ position: absolute; left: $left; top: $top; }
  @mixin absr($right, $top: $right){ position: absolute; right: $right; top: $top; }
@@ -143,10 +152,13 @@
      &.active {
          /* when the draggable is focused */
      }
+     &:not(.is-editing){
+         color: #fff;/* TODO use stub color before wysiwyg color picker is implemented */
+     }
      &.is-editing {
          /* when the layer is being edited */
          /* background-color: #fff; */
-         .handle { display: none !important; }/* handles are awkward when editing content */
+         /* .handle-s are hidden but above in unscoped style block */
          .draggable-content { display: none; }
          .draggable-editor { display: block; }
      }
