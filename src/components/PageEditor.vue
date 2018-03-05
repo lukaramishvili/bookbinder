@@ -45,8 +45,8 @@
                  page_number: 1,
                  scene_bg: 'http://localhost/bookulus/src/assets/p/pg_bg_30.png',
                  layers: [
-                     this.genLayer('text'),
-                     this.genLayer('image')
+                     this.genLayer(1, 'text'),
+                     this.genLayer(2, 'image')
                  ],
              },
          };
@@ -69,17 +69,18 @@
          zNewLayer(){
              return 1 + this.zMax();
          },
-         genLayer(layerType){
+         genLayer(id, layerType){
              var cLayers = this && this.page ? this.page.layers.length : 0;
              return {
-                 id: cLayers + 1, type: layerType, name: 'new1',
-                 x: 50, y: 50, w:100, h:80, z: this.zNewLayer(), bg: Colors.hexRandom(),
+                 id: id ? id : (cLayers + 1), type: layerType, name: 'new1',
+                 x: Math.round(Math.random()*900), y: 50, w:180, h:130,
+                 z: this.zNewLayer(), bg: Colors.hexRandom(),
                  textContent: '', imgSrc: '',
              };
          },
          addLayer(layerType){
              //this.$el, this.$parent, this._props, this._data
-             this.page.layers.push(this.genLayer(layerType));
+             this.page.layers.push(this.genLayer(null, layerType));
          },
          removeLayer(layer){
              this.page.layers = this.page.layers.filter(l => l.id != layer.id);

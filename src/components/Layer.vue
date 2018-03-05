@@ -1,6 +1,9 @@
 <template>
     <!-- +'background: '+layer.bg+'; color: '+invertColor(layer.bg)+';' -->
-    <vue-draggable-resizable :x="layer.x" :y="layer.y" :w="layer.w" :h="layer.h" :parent="true" :style="'z-index: '+layer.z+'; '" :drag-handle="'.drag-handle'" @resizing="onResize" @dragging="onDrag">
+    <vue-draggable-resizable
+        :x="layer.x" :y="layer.y" :w="layer.w" :h="layer.h" :parent="true"
+        :class="(isEditing ? 'is-editing' : '')" :style="'z-index: '+layer.z+'; '"
+        :drag-handle="'.drag-handle'" @resizing="onResize" @dragging="onDrag">
         <div class="drag-handle">
             <i class="fa fa-arrows-alt"></i>
         </div>
@@ -15,7 +18,7 @@
             order: {{layer.z}}
         </div>
         <button type="button" class="actions-btn" onclick="this.nextElementSibling.style.display = window.getComputedStyle(this.nextElementSibling).display === 'block' ? 'none' : 'block';">
-            <i class="fa fa-pen-square"></i>
+            <i class="fa fa-bars"></i>
         </button>
         <div class="actions" :style="'color: '+invertColor(layer.bg)+';'">
             <button type="button" @click="$emit('arrange', 'up', true)">
@@ -34,16 +37,29 @@
                 <i class="fa fa-times-circle"></i>
             </button>
         </div>
+        <button type="button" class="toggle-edit-mode-btn" @click="isEditing = !isEditing">
+            <i class="fa fa-pen-square icon-default"></i>
+            <i class="fa fa-times icon-editing"></i>
+        </button>
         <!-- end of pos:abs action buttons; start content -->
         <div class="draggable-content">
-            <template v-if="layer.type == 'text'">
-                <wysiwyg v-model="layer.textContent"></wysiwyg>
-            </template>
+            <template v-if="layer.type == 'text'" v-html="layer.textContent"></template>
             <template v-if="layer.type == 'image'">
                 <img v-if="layer.imgSrc" :src="layer.imgSrc" />
             </template>
             <template v-else-if="layer.type == 'character'">
                 
+            </template>
+        </div>
+        <div class="draggable-editor">
+            <template v-if="layer.type == 'text'">
+                <wysiwyg v-model="layer.textContent"></wysiwyg>
+            </template>
+            <template v-if="layer.type == 'image'">
+                upload layer.imgSrc
+            </template>
+            <template v-else-if="layer.type == 'character'">
+                character editor
             </template>
         </div>
     </vue-draggable-resizable>
@@ -73,6 +89,7 @@
      },
      data() {
          return {
+             isEditing: false,
          };
      },
      methods: {
@@ -116,11 +133,22 @@
  .draggable {
      border: 1px dashed gray; display: flex; justify-content: stretch; align-items: stretch;
      &-content {
-         /* textarea { flex: 1; width: 100%; height: 100%; } */
-         img { flex: 1; }
+     }
+     &-editor {
+         .editr {
+             background-color: #fff;
+         }
+         display: none;
      }
      &.active {
-         background-color: #fff;
+         /* when the draggable is focused */
+     }
+     &.is-editing {
+         /* when the layer is being edited */
+         /* background-color: #fff; */
+         .handle { display: none !important; }/* handles are awkward when editing content */
+         .draggable-content { display: none; }
+         .draggable-editor { display: block; }
      }
      &.dragging {
          .drag-handle {
@@ -135,7 +163,8 @@
  }
  .actions {
      &-btn { @extend %extra-btn; @include absbr(calc(100% + 1px), 0); }
-     @include absbr(calc(100% + 1px), 22px); width: 80px; background: inherit; color: inherit;
+     @include absbr(calc(100% + 1px), 22px); width: 80px;
+     /* background: inherit; color: inherit; */ background: #fff; color: black;
      white-space: nowrap; border-radius: 2px;
      display: none;
      button {
@@ -144,8 +173,17 @@
  }
  .info {
      &-btn { @extend %extra-btn; @include abs(calc(100% + 1px), 0); }
-     @include abs(calc(100% + 1px), 23px); width: 60px; background: inherit; color: inherit;
+     @include abs(calc(100% + 1px), 23px); width: 60px;
+     /* background: inherit; color: inherit; */ background: #fff; color: gray;
      font-size: 12px; border-radius: 2px;
      display: none;
+ }
+ .toggle-edit-mode-btn {
+     @extend %extra-btn; @include absr(calc(100% + 1px), 25px);
+     .icon-editing { display: none; }
+     .draggable.is-editing & {
+         .icon-default { display: none; }
+         .icon-editing { display: inline-block; }
+     }
  }
 </style>
