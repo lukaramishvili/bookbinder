@@ -29,4 +29,5 @@
      text-align: center;
      color: #2c3e50;
  }
+ @import "../node_modules/vue-wysiwyg/dist/vueWysiwyg.css";
 </style>
