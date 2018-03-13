@@ -50,7 +50,7 @@
                 <img v-if="layer.imgSrc" :src="layer.imgSrc" />
             </template>
             <template v-else-if="layer.type == 'character'">
-                
+                <Character :character-id="layer.characterId"></Character>
             </template>
         </div>
         <div class="draggable-editor">
@@ -58,10 +58,12 @@
                 <wysiwyg v-model="layer.textContent"></wysiwyg>
             </template>
             <template v-if="layer.type == 'image'">
-                upload layer.imgSrc
+                <input :id="'imgLayerUpload-'+layer.id" type="file" value="" style="display: none;" />
             </template>
             <template v-else-if="layer.type == 'character'">
-                character editor
+                <!-- we don't need :editable <Character> here to change facial features -->
+                <!-- <Character :character-id="layer.characterId"></Character> -->
+                No edit parameters
             </template>
         </div>
     </vue-draggable-resizable>
@@ -70,6 +72,7 @@
 <script>
  // docs/examples: https://mauricius.github.io/vue-draggable-resizable/
  import VueDraggableResizable from 'vue-draggable-resizable'
+ import Character from './Character'
  import Colors from '../lib/Colors'
 
 
@@ -78,7 +81,7 @@
  export default {
      name: 'Layer',
      components: {
-         VueDraggableResizable,
+         VueDraggableResizable, Character,
      },
      props: {
          layer : {
@@ -125,6 +128,7 @@
  @mixin absr($right, $top: $right){ position: absolute; right: $right; top: $top; }
  @mixin absbl($bottom, $left: $bottom){ position: absolute; bottom: $bottom; left: $left; }
  @mixin absbr($bottom, $right: $bottom){ position: absolute; bottom: $bottom; right: $right; }
+ @mixin size($width, $height: $width) { width: $width; height: $height; }
  /*  */
  %reset-btn {
      -webkit-appearance: none; display: inline-block; border: 0; padding: 0;
@@ -142,6 +146,7 @@
  .draggable {
      border: 1px dashed gray; display: flex; justify-content: stretch; align-items: stretch;
      &-content {
+         @include size(100%);
      }
      &-editor {
          .editr {
