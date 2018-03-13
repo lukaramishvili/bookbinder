@@ -47,7 +47,8 @@
                 <div v-html="layer.textContent"></div>
             </template>
             <template v-if="layer.type == 'image'">
-                <img v-if="layer.imgSrc" :src="layer.imgSrc" />
+                <div v-if="layer.imgSrc" class="layer-img-preview" :style="'background-image: url('+layer.imgSrc+');'"></div>
+                <div v-else class="layer-img-placeholder">Image here</div>
             </template>
             <template v-else-if="layer.type == 'character'">
                 <Character :character-id="layer.characterId"></Character>
@@ -58,7 +59,8 @@
                 <wysiwyg v-model="layer.textContent"></wysiwyg>
             </template>
             <template v-if="layer.type == 'image'">
-                <input :id="'imgLayerUpload-'+layer.id" type="file" value="" style="display: none;" />
+                <input :id="'imgLayerUpload-'+layer.id" type="file" @change="upload($event.target)" class="layer-upload-input" />
+                <label class="layer-upload-label" :for="'imgLayerUpload-'+layer.id">Upload</label>
             </template>
             <template v-else-if="layer.type == 'character'">
                 <!-- we don't need :editable <Character> here to change facial features -->
@@ -110,7 +112,39 @@
          onResize(x,y,w,h){
              //if the top/left resizer handles are moved, x and y also change
              this.updatePosSize(x,y,w,h);
-         }
+         },
+         upload(input){
+             var self = this;
+             if(input.files.length){
+                 // TODO show loader
+                 for(var iFile in input.files){
+                     if(!isNaN(iFile)){//otherwise we'll get 'length' and 'file' as keys too
+                         var file = input.files[iFile];
+                         //to allow removing before submit, save uploads in a variable instead of directly appending to form data (that's done directly before submitting)
+                         var uploadIndex = Math.round(Math.random()*10000000);
+                         self.layer.tempUpload = {
+                             index : uploadIndex,
+                             //to allow multiple uploads, square brackets are needed
+                             //just for reference, we won't be needing it here
+                             input_name : 'layerupload-'+self.layer.id,//+'[]'
+                             file : file,
+                             file_name : file.name,
+                         };
+                         // add preview box
+                         var reader = new FileReader();
+                         reader.onload = function(e) {
+                             var previewSrc = e.target.result;
+                             self.layer.imgSrc = previewSrc;
+                             //close edit form to show uploaded image
+                             self.isEditing = false;
+                         };
+                         reader.readAsDataURL(file);
+                     }
+                 }
+                 //clear file uploader value to allow uploading again(e.g. same file)
+                 input.value = null;
+             }
+         },//upload()
      }
  }
 </script>
@@ -129,6 +163,24 @@
  @mixin absbl($bottom, $left: $bottom){ position: absolute; bottom: $bottom; left: $left; }
  @mixin absbr($bottom, $right: $bottom){ position: absolute; bottom: $bottom; right: $right; }
  @mixin size($width, $height: $width) { width: $width; height: $height; }
+ @mixin ratio($x: 1, $y: 1, $contentselector: ".nothing"){
+     position: relative;
+     &:before {
+	 content: ""; display: block;
+	 padding-top: percentage($y/$x);
+	 pointer-events: none;
+     }
+     #{unquote($contentselector)} {
+	 position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+     }
+ }
+ @mixin img($xRatio: 1, $yRatio: 1){
+     @include ratio($xRatio, $yRatio, ".nothing");
+     background-size: cover; background-position: center center; background-repeat: no-repeat;
+ }
+ @mixin img-contain($xRatio, $yRatio: $xRatio){
+     @include img($xRatio, $yRatio); background-size: contain;
+ }
  /*  */
  %reset-btn {
      -webkit-appearance: none; display: inline-block; border: 0; padding: 0;
@@ -177,6 +229,20 @@
      /* cursor: all-scroll; */
      cursor: grab; cursor: -webkit-grab; cursor: -moz-grab;
      @include absr(calc(100% + 2px), 0); color: #fff;
+ }
+ .layer {
+     &-upload-input {
+         display: none;
+     }
+     &-upload-label {
+         color: #fff; cursor: pointer;
+     }
+     &-img-placeholder {
+         color: #fff;
+     }
+     &-img-preview {
+         @include abs(0); @include size(100%); @include img();
+     }
  }
  .actions {
      &-btn { @extend %extra-btn; @include absbr(calc(100% + 1px), 0); }
