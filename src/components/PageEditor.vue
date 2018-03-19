@@ -15,7 +15,8 @@
             <button type="button" class="save-btn" @click="toggleFullscreen()">
                 <i class="fa fa-compress fs-collapse-btn"></i>
                 <i class="fa fa-expand fs-expand-btn"></i>
-                მთელ ეკრანზე
+                <template v-if="isFullscreen">დახურვა</template>
+                <template v-else>მთელ ეკრანზე</template>
             </button>
         </div>
         <template v-for="l in page.layers" v-bind="l">
