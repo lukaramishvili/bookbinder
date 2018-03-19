@@ -12,6 +12,11 @@
             </select>
             <button type="button" class="add-btn" @click="addLayer(newLayerType)">დამატება</button>
             <button type="button" class="save-btn" @click="save()">დამახსოვრება</button>
+            <button type="button" class="save-btn" @click="toggleFullscreen()">
+                <i class="fa fa-compress fs-collapse-btn"></i>
+                <i class="fa fa-expand fs-expand-btn"></i>
+                მთელ ეკრანზე
+            </button>
         </div>
         <template v-for="l in page.layers" v-bind="l">
             <Layer :layer="l" @remove-layer="removeLayer(l)" @arrange="arrangeLayer(l, ...arguments)"></Layer>
@@ -22,6 +27,9 @@
 <script>
  import Layer from './Layer'
  import Colors from '../lib/Colors'
+ import fullscreen from 'vue-fullscreen'
+ import Vue from 'vue'
+ Vue.use(fullscreen)
  
  export default {
      name: 'PageEditor',
@@ -33,8 +41,8 @@
              type: Number,
              required: true,
              /* validator: function (value) {
-                  return /^\d+$/.test(value);
-                  }*/
+                return /^\d+$/.test(value);
+                }*/
          }
      },
      beforeUpdate(){
@@ -44,6 +52,7 @@
          //this._props.page_id
          return {
              isLoaded: false,
+             isFullscreen: false,
              newLayerType: 'text',//default selection
              newCharacterId: '',//selected
              allCharacters: [],
@@ -52,6 +61,7 @@
      },
      mounted() {
          this.fetchData();
+         this.fixFullscreenIcons();
      },
      methods: {
          fetchData(){
@@ -74,6 +84,27 @@
                      self.isLoaded = true;
                      console.log(data);
                  });
+         },
+         fixFullscreenIcons(){
+             //vue v-if/v-else or :class= or :style= attributes didn't work on .fa icons
+             if(this.isFullscreen){
+                 this.$el.querySelector('.fs-expand-btn').style.display = 'none';
+                 this.$el.querySelector('.fs-collapse-btn').style.display = 'inline-block';
+             } else {
+                 this.$el.querySelector('.fs-expand-btn').style.display = 'inline-block';
+                 this.$el.querySelector('.fs-collapse-btn').style.display = 'none';
+             }
+         },
+         fullscreenChangeCallback(){
+             this.isFullscreen = !this.isFullscreen;
+             this.fixFullscreenIcons();
+         },
+         toggleFullscreen(){
+             //this.$el already is .page-editor
+             this.$fullscreen.toggle(this.$el, {
+                 wrap: false,
+                 callback: this.fullscreenChangeCallback
+             });
          },
          zMin(){
              if(this && this.page){
@@ -126,8 +157,48 @@
              }
          },
          save(){
-             //ajax save
-         }
+             //ajax save page layout
+             var formData = new FormData();
+             //TODO gather real layer data
+             var page_layout = JSON.stringify([
+                 {
+                     'id' : 1, 'type' : 'text', 'name' : 'layer1',
+                     'x' : 400, 'y' : 80, 'w' : 210, 'h' : 130,
+                     'z' : 1, 'bg' : '#00ccff',
+                     'textContent' : '', 'imgSrc' : '',
+                 },
+                 {
+                     'id' : 2, 'type' : 'image', 'name' : 'layer1',
+                     'x' : 800, 'y' : 60, 'w' : 200, 'h' : 160,
+                     'z' : 2, 'bg' : '#ff0000',
+                     'textContent' : '', 'imgSrc' : '',
+                 },
+             ]);
+             formData.append('page_layout', page_layout);
+             //TODO add each layer image as separate upload
+             /*if($f1.val()) {
+                var fileList = $f1.get(0).files;
+                for(var x=0;x<fileList.length;x++) {
+                formData.append('file'+x, fileList.item(x));    
+                }
+                }*/
+             //
+             fetch('http://bookulus.devv/api/page/'+this.page_id, {
+                 method:'POST',
+                 body:formData,
+             }).then(function(response) {
+                 return response.json();
+             }).then(function(data) {
+                 if(data.success){
+                     alert('გვერდი შენახულია.');
+                 } else {
+                     alert('მოხდა შეცდომა. ' + data.message);
+                 }
+                 console.log('Save success', data);
+             }).catch(function(e) {
+                 console.log('Save Error', e);
+             });
+         }//end save()
      }
  }
 </script>
@@ -155,6 +226,7 @@
  .page-editor {
      position: relative; border: 1px dotted gray; margin-bottom: 30px;
      background-size: 100% 100%; background-position: left top;
+     width: 100%;
      @include ratio(2.83);
      &-actions {
          @include abs(0, calc(100% + 5px)); width: 100%; text-align: center;
