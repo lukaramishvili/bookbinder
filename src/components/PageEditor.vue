@@ -68,7 +68,7 @@
          fetchData(){
              var self = this;
              //fetch all characters
-             fetch('http://bookulus.devv/api/characters')
+             fetch(self.$apiBaseUrl + '/characters')
                  .then(function(response) {
                      return response.json();
                  })
@@ -76,7 +76,7 @@
                      self.allCharacters = data;
                  });
              //fetch page data
-             fetch('http://bookulus.devv/api/page/'+this.page_id)
+             fetch(self.$apiBaseUrl + '/page/'+this.page_id)
                  .then(function(response) {
                      return response.json();
                  })
@@ -184,7 +184,7 @@
                 }
                 }*/
              //
-             fetch('http://bookulus.devv/api/page/'+this.page_id, {
+             fetch(self.$apiBaseUrl + '/page/'+this.page_id, {
                  method:'POST',
                  body:formData,
              }).then(function(response) {

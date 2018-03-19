@@ -6,6 +6,13 @@
 
 <script>
  import PageEditor from './components/PageEditor'
+ import Vue from 'vue'
+
+ if(document.location.host.indexOf('localhost') > -1){
+     Vue.prototype.$apiBaseUrl = 'http://bookulus.devv/api';
+ } else {
+     Vue.prototype.$apiBaseUrl = document.location.protocol + '//' + document.location.host + '/api';
+ }
  
  export default {
      name: 'App',

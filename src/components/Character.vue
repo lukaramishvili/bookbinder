@@ -38,7 +38,7 @@
          fetchData(){
              var self = this;
              //fetch all characters
-             fetch('http://bookulus.devv/api/character/'+this.characterId)
+             fetch(self.$apiBaseUrl + '/character/'+this.characterId)
                  .then(function(response) {
                      return response.json();
                  })
