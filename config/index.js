@@ -56,12 +56,14 @@ module.exports = {
 
     build: {
         // Template for index.html
-        index: path.resolve(__dirname, '../dist/index.html'),
+        //index: path.resolve(__dirname, '../dist/index.html'),
+        index: '/www/bookulus.ge/web/bb/index.html',
 
         // Paths
-        assetsRoot: path.resolve(__dirname, '../dist'),
+        //assetsRoot: path.resolve(__dirname, '../dist'),
+        assetsRoot: '/www/bookulus.ge/web/bb',
         assetsSubDirectory: 'static',
-        assetsPublicPath: '/',
+        assetsPublicPath: './',
 
         /**
          * Source Maps
