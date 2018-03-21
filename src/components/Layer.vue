@@ -2,7 +2,7 @@
     <!-- +'background: '+layer.bg+'; color: '+invertColor(layer.bg)+';' -->
     <vue-draggable-resizable
         :x="layer.x" :y="layer.y" :w="layer.w" :h="layer.h" :parent="true"
-        :class="(isEditing ? 'is-editing' : '')" :style="'z-index: '+layer.z+'; '"
+        :class="(isEditing ? ' is-editing ' : '') + (isVisible ? '' : ' hidden ')" :style="'z-index: '+layer.z+'; '"
         :drag-handle="'.drag-handle'" @resizing="onResize" @dragging="onDrag">
         <div class="drag-handle">
             <i class="fa fa-arrows-alt"></i>
@@ -16,6 +16,13 @@
             type: {{ layer.type }}
             <input v-model="layer.name" size="5" />
             order: {{layer.z}}
+            სქესი:
+            <br>
+            <select v-model="layer.gender">
+                <option value="all" selected="selected">ყველა</option>
+                <option value="boy">ბიჭი</option>
+                <option value="girl">გოგო</option>
+            </select>
         </div>
         <button type="button" class="actions-btn" onclick="this.nextElementSibling.style.display = window.getComputedStyle(this.nextElementSibling).display === 'block' ? 'none' : 'block';">
             <i class="fa fa-bars"></i>
@@ -145,6 +152,21 @@
                  input.value = null;
              }
          },//upload()
+     },
+     computed: {
+         isVisibleInPreview: function(){
+             var preview = this.$parent.previewGender;
+             //show only when: empty gender value on layer (meaning non-gender-specific)
+             return !('gender' in this.layer)
+                 || this.layer.gender == ''
+             //selected all-gender value on layer
+                 || this.layer.gender == 'all'
+             //matching the preview gender
+                 || this.layer.gender == preview;
+         },
+         isVisible: function(){
+             return this.$parent.isPreviewModeOn ? this.isVisibleInPreview : true;
+         },
      }
  }
 </script>
@@ -153,6 +175,7 @@
 <style lang="scss">
  /* need to be unscoped - .handle's are inside .vue-draggable */
  .draggable {
+     &.hidden { display: none !important; }
      /* handles are awkward when editing content */
      &.is-editing { .handle { visibility: hidden; } }
  }

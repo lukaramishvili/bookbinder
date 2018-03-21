@@ -1,6 +1,14 @@
 <template v-if="isLoaded">
     <div class="page-editor" :data-page-id="page.id" :style="'background-image: url('+page.scene_bg+');'">
         <div class="page-editor-actions">
+            <div style="float:left; font-size: 12px;">
+                ბიჭი/გოგო
+                <select class="select-preview-gender" v-model="previewGender">
+                    <option value="none" selected="selected">ყველა</option>
+                    <option value="boy">ბიჭი</option>
+                    <option value="girl">გოგო</option>
+                </select>
+            </div>
             <select class="select-new-layer-type" v-model="newLayerType">
                 <option value="text">ტექსტური</option>
                 <option value="image">სურათი</option>
@@ -55,6 +63,7 @@
              isLoaded: false,
              isFullscreen: false,
              newLayerType: 'text',//default selection
+             previewGender: 'none',
              newCharacterId: '',//selected
              allCharacters: [],
              page: {},
@@ -200,6 +209,11 @@
                  console.log('Save Error', e);
              });
          }//end save()
+     },
+     computed: {
+         isPreviewModeOn: function(){
+             return !(this.previewGender == 'none' || this.previewGender == 'all');
+         }
      }
  }
 </script>
