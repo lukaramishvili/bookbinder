@@ -167,6 +167,7 @@
              }
          },
          save(){
+             var self = this;
              //ajax save page layout
              var formData = new FormData();
              //TODO gather real layer data
