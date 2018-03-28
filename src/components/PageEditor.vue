@@ -170,8 +170,10 @@
              var self = this;
              //ajax save page layout
              var formData = new FormData();
-             //TODO gather real layer data
-             var page_layout = JSON.stringify([
+             //gather layer data
+             var page_layout = JSON.stringify(this.page.layers);
+             // TEST layer data
+             /* [
                  {
                      'id' : 1, 'type' : 'text', 'name' : 'layer1',
                      'x' : 400, 'y' : 80, 'w' : 210, 'h' : 130,
@@ -184,15 +186,26 @@
                      'z' : 2, 'bg' : '#ff0000',
                      'textContent' : '', 'imgSrc' : '',
                  },
-             ]);
-             formData.append('page_layout', page_layout);
-             //TODO add each layer image as separate upload
-             /*if($f1.val()) {
-                var fileList = $f1.get(0).files;
-                for(var x=0;x<fileList.length;x++) {
-                formData.append('file'+x, fileList.item(x));    
-                }
-                }*/
+             ] */
+             //
+             //add each layer image as separate upload
+             //straightforward base64 imgSrc saving is working, but feels very wrong
+             var submit_page_layout = this.page.layers.map((l_orig) => {
+                 var l_to_submit = JSON.parse(JSON.stringify(l_orig));
+                 if(l_orig.tempUpload){
+                     formData.append('layer_upload_'+l_orig.tempUpload.index, l_orig.tempUpload.file);
+                     //forEach passes by reference, so we can mutate arguments
+                     //clear imgSrc, so that base64 image is not submitted
+                     l_to_submit.imgSrc = '';
+                     //it's already appended to formData, so we can safely delete it
+                     //we're clearing tempUpload's file contents but leaving other upload info for the upload script (index, file name, etc). the upload php code will delete it
+                     delete l_to_submit.tempUpload.file;
+                 }
+                 return l_to_submit;
+             });
+             //directly appending to formData results in [object Object]
+             //turns out the reason for json_decode=>NULL was excess slashes (\" vs ")
+             formData.append('page_layout', JSON.stringify(submit_page_layout));
              //
              fetch(self.$apiBaseUrl + '/page/'+this.page_id, {
                  method:'POST',
