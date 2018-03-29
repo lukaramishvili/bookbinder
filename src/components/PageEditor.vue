@@ -214,6 +214,7 @@
                      //we're clearing tempUpload's file contents but leaving other upload info for the upload script (index, file name, etc). the upload php code will delete it
                      delete l_to_submit.tempUpload.file;
                  }
+                 l_to_submit.textContent = l_to_submit.textContent.replace(new RegExp('"', 'gi'), '\\"');
                  return l_to_submit;
              });
              //directly appending to formData results in [object Object]
