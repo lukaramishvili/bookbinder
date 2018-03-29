@@ -92,7 +92,7 @@
                  .then(function(data) {
                      self.page = data;
                      self.isLoaded = true;
-                     console.log(data);
+                     console.log('JSON data from server: ', data);
                  });
          },
          fixFullscreenIcons(){
@@ -134,9 +134,10 @@
              return 1 + this.zMax();
          },
          genLayer(id, layerType){
-             var cLayers = this && this.page ? this.page.layers.length : 0;
+             var areLayers = this && this.page && this.page.layers && this.page.layers.length;
+             var maxLayerId = areLayers ? Math.max(...this.page.layers.map((l)=>l.id)) : 0;
              return {
-                 id: id ? id : (cLayers + 1), type: layerType, name: 'new1',
+                 id: id ? id : (maxLayerId + 1), type: layerType, name: 'new1',
                  x: Math.round(Math.random()*900), y: 50, w:180, h:130,
                  z: this.zNewLayer(), bg: Colors.hexRandom(),
                  characterId: null, textContent: '', imgSrc: '',
@@ -157,6 +158,8 @@
              this.page.layers.push(newLayer);
          },
          removeLayer(layer){
+             //if we filter the layer, then e.g. removing the [0] layer will shift the indexes down by 1, so [1] will gain an index of [0] and watch for incorrect [0] data
+	     // fixing this by doing "delete .layers[i]" instead of mapping which returns a new array with changed index and length
              this.page.layers = this.page.layers.filter(l => l.id != layer.id);
          },
          arrangeLayer(layer, direction, moveFurthest){
@@ -188,8 +191,8 @@
                  },
              ] */
              //
-             //add each layer image as separate upload
-             //straightforward base64 imgSrc saving is working, but feels very wrong
+             //add each layer image as separate upload and clear upload temp data
+             //straightforward base64 imgSrc saving was working, but felt very wrong
              var submit_page_layout = this.page.layers.map((l_orig) => {
                  var l_to_submit = JSON.parse(JSON.stringify(l_orig));
                  if(l_orig.tempUpload){
@@ -205,6 +208,7 @@
              });
              //directly appending to formData results in [object Object]
              //turns out the reason for json_decode=>NULL was excess slashes (\" vs ")
+             // which were added by WORDPRESS!!!!!!111 spent hours on this, used hex2bin, stripcslashes, iconv, convert_encoding, utf8_, everything
              formData.append('page_layout', JSON.stringify(submit_page_layout));
              //
              fetch(self.$apiBaseUrl + '/page/'+this.page_id, {
@@ -215,6 +219,8 @@
              }).then(function(data) {
                  if(data.success){
                      alert('გვერდი შენახულია.');
+                     //the page sends back the saved layers data so that the page editor can update the data without refreshing
+                     self.page.layers = data.page_layout;
                  } else {
                      alert('მოხდა შეცდომა. ' + data.message);
                  }
