@@ -27,8 +27,10 @@
                 <template v-else>მთელ ეკრანზე</template>
             </button>
         </div>
-        <template v-for="l in page.layers" v-bind="l">
-            <Layer :layer="l" @remove-layer="removeLayer(l)" @arrange="arrangeLayer(l, ...arguments)"></Layer>
+        <template v-if="showLayers">
+            <template v-for="(l, indexL) in page.layers" v-bind="l">
+                <Layer :layer="l" @remove-layer="removeLayer(indexL)" @arrange="arrangeLayer(l, ...arguments)"></Layer>
+            </template>
         </template>
     </div>
 </template>
@@ -62,6 +64,7 @@
          return {
              isLoaded: false,
              isFullscreen: false,
+             showLayers: true,//for redrawing
              newLayerType: 'text',//default selection
              previewGender: 'none',
              newCharacterId: '',//selected
@@ -157,10 +160,17 @@
              }
              this.page.layers.push(newLayer);
          },
-         removeLayer(layer){
-             //if we filter the layer, then e.g. removing the [0] layer will shift the indexes down by 1, so [1] will gain an index of [0] and watch for incorrect [0] data
-	     // fixing this by doing "delete .layers[i]" instead of mapping which returns a new array with changed index and length
-             this.page.layers = this.page.layers.filter(l => l.id != layer.id);
+         removeLayer(indexL){
+             this.page.layers.splice(indexL, 1);
+             //splice makes layers with their index>indexL listen to wrong layers because the indices have been changed
+             this.redrawLayers();
+         },
+         redrawLayers(){
+             var self = this;
+             self.showLayers = false;
+             setTimeout(function(){
+                 self.showLayers = true;
+             }, 0);
          },
          arrangeLayer(layer, direction, moveFurthest){
              if(direction == 'up'){
