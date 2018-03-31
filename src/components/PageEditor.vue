@@ -148,7 +148,7 @@
              var maxLayerId = areLayers ? Math.max(...this.page.layers.map((l)=>l.id)) : 0;
              return {
                  id: id ? id : (maxLayerId + 1), type: layerType, name: 'new1',
-                 x: 100+Math.round(Math.random()*70), y: Math.round(Math.random()*30),
+                 x: Math.round(Math.random()*70), y: Math.round(Math.random()*30),
                  w:180, h:130,
                  z: this.zNewLayer(), bg: Colors.hexRandom(),
                  characterId: null, textContent: '', imgSrc: '',
