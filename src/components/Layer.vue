@@ -1,7 +1,7 @@
 <template>
     <!-- +'background: '+layer.bg+'; color: '+invertColor(layer.bg)+';' -->
     <vue-draggable-resizable
-        :x="layer.x" :y="layer.y" :w="layer.w" :h="layer.h" :parent="true"
+        :x="this.$parent.horRelToAbs(layer.x)" :y="this.$parent.verRelToAbs(layer.y)" :w="this.$parent.horRelToAbs(layer.w)" :h="this.$parent.verRelToAbs(layer.h)" :parent="true"
         :class="(isEditing ? ' is-editing ' : '') + (isVisible ? '' : ' hidden ')" :style="'z-index: '+layer.z+'; '"
         :drag-handle="'.drag-handle'" @resizing="onResize" @dragging="onDrag">
         <div class="drag-handle">
@@ -99,7 +99,7 @@
              /*validator: function (value) {
                 return /^\d+$/.test(value);
                 }*/
-         }
+         },
      },
      data() {
          return {
@@ -111,7 +111,12 @@
              return Colors.invert(color, true);
          },
          updatePosSize(x,y,w,h){
-             [this.layer.x, this.layer.y, this.layer.w, this.layer.h] = [x,y,w,h];
+             [this.layer.x, this.layer.y, this.layer.w, this.layer.h] = [
+                 this.$parent.horAbsToRel(x),
+                 this.$parent.verAbsToRel(y),
+                 this.$parent.horAbsToRel(w),
+                 this.$parent.verAbsToRel(h),
+             ];
          },
          onDrag(x,y,w,h){
              this.updatePosSize(x,y,w,h);

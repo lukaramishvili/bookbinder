@@ -75,6 +75,7 @@
      mounted() {
          this.fetchData();
          this.fixFullscreenIcons();
+         window.addEventListener('resize', this.onResize);
      },
      methods: {
          fetchData(){
@@ -110,7 +111,10 @@
          },
          fullscreenChangeCallback(){
              this.isFullscreen = !this.isFullscreen;
+             //fontawesome has a problem, so force-fix them
              this.fixFullscreenIcons();
+             //relative positions are not updating, so force it
+             setTimeout(()=> { this.redrawLayers(); }, 50);
          },
          toggleFullscreen(){
              //this.$el already is .page-editor
@@ -118,6 +122,9 @@
                  wrap: false,
                  callback: this.fullscreenChangeCallback
              });
+         },
+         onResize(){
+             setTimeout(()=> { this.redrawLayers(); }, 50);
          },
          zMin(){
              if(this && this.page){
@@ -141,7 +148,8 @@
              var maxLayerId = areLayers ? Math.max(...this.page.layers.map((l)=>l.id)) : 0;
              return {
                  id: id ? id : (maxLayerId + 1), type: layerType, name: 'new1',
-                 x: Math.round(Math.random()*900), y: 50, w:180, h:130,
+                 x: 100+Math.round(Math.random()*70), y: Math.round(Math.random()*30),
+                 w:180, h:130,
                  z: this.zNewLayer(), bg: Colors.hexRandom(),
                  characterId: null, textContent: '', imgSrc: '',
              };
@@ -179,6 +187,19 @@
                  layer.z = Math.max(1, -1 + (moveFurthest ? this.zMin() : layer.z));
              }
          },
+         getWorkingAreaWidth(){
+             return document.querySelector('.page-editor').offsetWidth;
+         },
+         getWorkingAreaHeight(){
+             return document.querySelector('.page-editor').offsetHeight;
+         },
+         //translates absolute pixel x,w to percents for correct page editor scaling
+         //xRel/etc are relative percents here (e.g. 50 means x=50%)
+         horRelToAbs(horDimRel){ return horDimRel*this.getWorkingAreaWidth()/100; },
+         verRelToAbs(verDimRel){ return verDimRel*this.getWorkingAreaHeight()/100; },
+         //the reverse
+         horAbsToRel(horDimAbs){ return 100*horDimAbs/this.getWorkingAreaWidth(); },
+         verAbsToRel(verDimAbs){ return 100*verDimAbs/this.getWorkingAreaHeight(); },
          save(){
              var self = this;
              //ajax save page layout
@@ -244,7 +265,7 @@
      computed: {
          isPreviewModeOn: function(){
              return !(this.previewGender == 'none' || this.previewGender == 'all');
-         }
+         },
      }
  }
 </script>
