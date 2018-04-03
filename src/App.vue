@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <PageEditor :page_id="page_id" />
+        <PageEditor :page_id="page_id" :preview_mode="preview_mode" />
     </div>
 </template>
 
@@ -22,6 +22,8 @@
      data(){
          return {
              page_id: parseInt(this.getQueryParameter('page_id')),
+             preview_mode: this.getQueryParameter('preview_mode') == 'true',
+             facial_features_url_encoded: this.getQueryParameter('facial_features'),
          };
      },
      methods: {
@@ -34,7 +36,18 @@
              if (!results[2]) return '';
              return decodeURIComponent(results[2].replace(/\+/g, " "));
          }
-     }
+     },
+     computed: {
+         facial_features: function(){
+             var ret = null;
+             try {
+                 ret = JSON.parse(decodeURIComponent(this.facial_features_url_encoded));
+             } catch(e){
+                 // &facial_features=urlencoded json.stringified {} was not passed or was formatted incorrectly
+             }
+             return ret;
+         },
+     },
  }
 </script>
 

@@ -1,5 +1,6 @@
 <template v-if="isLoaded">
-    <div class="page-editor" :data-page-id="page.id" :style="'background-image: url('+page.scene_bg+');'">
+  <!-- if we point data-preview-mode to the boolean preview_mode without .toString(), it will omit the data-preview-mode attribute entirely when preview_mode is false -->
+    <div class="page-editor" :data-page-id="page.id" :data-preview-mode="preview_mode.toString()" :style="'background-image: url('+page.scene_bg+');'">
         <div class="page-editor-actions">
             <div style="float:left; font-size: 12px;">
                 ბიჭი/გოგო
@@ -54,7 +55,14 @@
              /* validator: function (value) {
                 return /^\d+$/.test(value);
                 }*/
-         }
+         },
+         preview_mode : {
+             type: Boolean,
+             required: true,
+             /* validator: function (value) {
+                return /^\d+$/.test(value);
+                }*/
+         },
      },
      beforeUpdate(){
          //console.clear();
@@ -208,19 +216,19 @@
              var page_layout = JSON.stringify(this.page.layers);
              // TEST layer data
              /* [
-                 {
-                     'id' : 1, 'type' : 'text', 'name' : 'layer1',
-                     'x' : 400, 'y' : 80, 'w' : 210, 'h' : 130,
-                     'z' : 1, 'bg' : '#00ccff',
-                     'textContent' : '', 'imgSrc' : '',
-                 },
-                 {
-                     'id' : 2, 'type' : 'image', 'name' : 'layer1',
-                     'x' : 800, 'y' : 60, 'w' : 200, 'h' : 160,
-                     'z' : 2, 'bg' : '#ff0000',
-                     'textContent' : '', 'imgSrc' : '',
-                 },
-             ] */
+                {
+                'id' : 1, 'type' : 'text', 'name' : 'layer1',
+                'x' : 400, 'y' : 80, 'w' : 210, 'h' : 130,
+                'z' : 1, 'bg' : '#00ccff',
+                'textContent' : '', 'imgSrc' : '',
+                },
+                {
+                'id' : 2, 'type' : 'image', 'name' : 'layer1',
+                'x' : 800, 'y' : 60, 'w' : 200, 'h' : 160,
+                'z' : 2, 'bg' : '#ff0000',
+                'textContent' : '', 'imgSrc' : '',
+                },
+                ] */
              //
              //add each layer image as separate upload and clear upload temp data
              //straightforward base64 imgSrc saving was working, but felt very wrong
@@ -270,6 +278,26 @@
  }
 </script>
 
+<!-- this style is not scoped to allow styling everything -->
+<style lang="scss">
+/* when edit mode is turned off, hide editor elements */
+%hidden {
+  /* on .page-editor, display: none causes weird Invalid prop validation errors */
+  display: none !important; pointer-events: none !important;
+}
+  .page-editor[data-preview-mode="true"] {
+    margin: 0 !important;
+    .page-editor-actions,
+    .drag-handle,
+    .draggable .handle,
+    .info-btn,
+    .actions-btn,
+    .toggle-edit-mode-btn {
+      @extend %hidden;
+    }
+    .draggable { border: 0; }
+  }
+</style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
  @mixin abs($left, $top: $left){ position: absolute; left: $left; top: $top; }
