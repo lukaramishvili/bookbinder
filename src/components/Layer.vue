@@ -1,81 +1,87 @@
 <template>
-    <!-- +'background: '+layer.bg+'; color: '+invertColor(layer.bg)+';' -->
-    <vue-draggable-resizable
-        :x="this.$parent.horRelToAbs(layer.x)" :y="this.$parent.verRelToAbs(layer.y)" :w="this.$parent.horRelToAbs(layer.w)" :h="this.$parent.verRelToAbs(layer.h)" :parent="true"
-        :class="(isEditing ? ' is-editing ' : '') + (isVisible ? '' : ' hidden ')" :style="'z-index: '+layer.z+'; '"
-        :drag-handle="'.drag-handle'" @resizing="onResize" @dragging="onDrag">
-        <div class="drag-handle">
-            <i class="fa fa-arrows-alt"></i>
-        </div>
-        <button type="button" class="info-btn" onclick="this.nextElementSibling.style.display = window.getComputedStyle(this.nextElementSibling).display === 'block' ? 'none' : 'block';">
-            <i class="fa fa-info-circle"></i>
-        </button>
-        <div class="info">
-            #{{layer.id}}
-            <br>
-            type: {{ layer.type }}
-            <input v-model="layer.name" size="5" />
-            order: {{layer.z}}
-            სქესი:
-            <br>
-            <select v-model="layer.gender">
-                <option value="all" selected="selected">ყველა</option>
-                <option value="boy">ბიჭი</option>
-                <option value="girl">გოგო</option>
-            </select>
-        </div>
-        <button type="button" class="actions-btn" onclick="this.nextElementSibling.style.display = window.getComputedStyle(this.nextElementSibling).display === 'block' ? 'none' : 'block';">
-            <i class="fa fa-bars"></i>
-        </button>
-        <div class="actions" :style="'color: '+invertColor(layer.bg)+';'">
-            <button type="button" @click="$emit('arrange', 'up', true)">
-                <i class="fa fa-arrow-alt-circle-up"></i>
-            </button>
-            <button type="button" @click="$emit('arrange', 'up', false)">
-                <i class="fa fa-arrow-up"></i>
-            </button>
-            <button type="button" @click="$emit('arrange', 'down', false)">
-                <i class="fa fa-arrow-down"></i>
-            </button>
-            <button type="button" @click="$emit('arrange', 'down', true)">
-                <i class="fa fa-arrow-alt-circle-down"></i>
-            </button>
-            <button type="button" @click="$emit('remove-layer')">
-                <i class="fa fa-times-circle"></i>
-            </button>
-        </div>
-        <button type="button" class="toggle-edit-mode-btn" @click="isEditing = !isEditing">
-            <i class="fa fa-pen-square icon-default"></i>
-            <i class="fa fa-times icon-editing"></i>
-        </button>
-        <!-- end of pos:abs action buttons; start content -->
-        <div class="draggable-content">
-            <template v-if="layer.type == 'text'">
-                <div v-html="layer.textContent"></div>
-            </template>
-            <template v-if="layer.type == 'image'">
-                <div v-if="layer.imgSrc" class="layer-img-preview" :style="'background-image: url('+layer.imgSrc+');'"></div>
-                <div v-else class="layer-img-placeholder">Image here</div>
-            </template>
-            <template v-else-if="layer.type == 'character'">
-                <Character :character-id="layer.characterId"></Character>
-            </template>
-        </div>
-        <div class="draggable-editor">
-            <template v-if="layer.type == 'text'">
-                <wysiwyg v-model="layer.textContent"></wysiwyg>
-            </template>
-            <template v-if="layer.type == 'image'">
-                <input :id="'imgLayerUpload-'+layer.id" type="file" @change="upload($event.target)" class="layer-upload-input" />
-                <label class="layer-upload-label" :for="'imgLayerUpload-'+layer.id">Upload</label>
-            </template>
-            <template v-else-if="layer.type == 'character'">
-                <!-- we don't need :editable <Character> here to change facial features -->
-                <!-- <Character :character-id="layer.characterId"></Character> -->
-                No edit parameters
-            </template>
-        </div>
-    </vue-draggable-resizable>
+  <!-- +'background: '+layer.bg+'; color: '+invertColor(layer.bg)+';' -->
+  <vue-draggable-resizable
+      :x="this.$parent.horRelToAbs(layer.x)" :y="this.$parent.verRelToAbs(layer.y)" :w="this.$parent.horRelToAbs(layer.w)" :h="this.$parent.verRelToAbs(layer.h)" :parent="true"
+      :class="(isEditing ? ' is-editing ' : '') + (isVisible ? '' : ' hidden ')" :style="'z-index: '+layer.z+'; '"
+      :drag-handle="'.drag-handle'" @resizing="onResize" @dragging="onDrag">
+    <div class="drag-handle">
+      <i class="fa fa-arrows-alt"></i>
+    </div>
+    <button type="button" class="info-btn" onclick="this.nextElementSibling.style.display = window.getComputedStyle(this.nextElementSibling).display === 'block' ? 'none' : 'block';">
+      <i class="fa fa-info-circle"></i>
+    </button>
+    <div class="info">
+      #{{layer.id}}
+      <br>
+      type: {{ layer.type }}
+      <input v-model="layer.name" size="5" />
+      order: {{layer.z}}
+      სქესი:
+      <br>
+      <button type="button" class="toggle-colorpicker-btn" @click="isColorPickerVisible = !isColorPickerVisible" :style="'background-color: ' + layer.color + ';'"></button>
+      <div class="colorpicker-wrapper" :style="isColorPickerVisible ? 'display: block' : 'display: none'">
+        <!-- <photoshop-picker v-model="layer.color" class="colorpicker" /> -->
+        <photoshop-picker :value="tempColor" class="colorpicker" @input="updateTempColor" @ok="okColorPicker" @cancel="cancelColorPicker" />
+      </div>
+      <br>
+      <select v-model="layer.gender">
+        <option value="all" selected="selected">ყველა</option>
+        <option value="boy">ბიჭი</option>
+        <option value="girl">გოგო</option>
+      </select>
+    </div>
+    <button type="button" class="actions-btn" onclick="this.nextElementSibling.style.display = window.getComputedStyle(this.nextElementSibling).display === 'block' ? 'none' : 'block';">
+      <i class="fa fa-bars"></i>
+    </button>
+    <div class="actions" :style="'color: '+invertColor(layer.bg)+';'">
+      <button type="button" @click="$emit('arrange', 'up', true)">
+        <i class="fa fa-arrow-alt-circle-up"></i>
+      </button>
+      <button type="button" @click="$emit('arrange', 'up', false)">
+        <i class="fa fa-arrow-up"></i>
+      </button>
+      <button type="button" @click="$emit('arrange', 'down', false)">
+        <i class="fa fa-arrow-down"></i>
+      </button>
+      <button type="button" @click="$emit('arrange', 'down', true)">
+        <i class="fa fa-arrow-alt-circle-down"></i>
+      </button>
+      <button type="button" @click="$emit('remove-layer')">
+        <i class="fa fa-times-circle"></i>
+      </button>
+    </div>
+    <button type="button" class="toggle-edit-mode-btn" @click="isEditing = !isEditing">
+      <i class="fa fa-pen-square icon-default"></i>
+      <i class="fa fa-times icon-editing"></i>
+    </button>
+    <!-- end of pos:abs action buttons; start content -->
+    <div class="draggable-content">
+      <template v-if="layer.type == 'text'">
+        <div v-html="layer.textContent" :style="'color: ' + layer.color + ';'"></div>
+      </template>
+      <template v-if="layer.type == 'image'">
+        <div v-if="layer.imgSrc" class="layer-img-preview" :style="'background-image: url('+layer.imgSrc+');'"></div>
+        <div v-else class="layer-img-placeholder">Image here</div>
+      </template>
+      <template v-else-if="layer.type == 'character'">
+        <Character :character-id="layer.characterId"></Character>
+      </template>
+    </div>
+    <div class="draggable-editor">
+      <template v-if="layer.type == 'text'">
+        <wysiwyg v-model="layer.textContent"></wysiwyg>
+      </template>
+      <template v-if="layer.type == 'image'">
+        <input :id="'imgLayerUpload-'+layer.id" type="file" @change="upload($event.target)" class="layer-upload-input" />
+        <label class="layer-upload-label" :for="'imgLayerUpload-'+layer.id">Upload</label>
+      </template>
+      <template v-else-if="layer.type == 'character'">
+        <!-- we don't need :editable <Character> here to change facial features -->
+        <!-- <Character :character-id="layer.characterId"></Character> -->
+        No edit parameters
+      </template>
+    </div>
+  </vue-draggable-resizable>
 </template>
 
 <script>
@@ -83,14 +89,22 @@
  import VueDraggableResizable from 'vue-draggable-resizable'
  import Character from './Character'
  import Colors from '../lib/Colors'
-
+ import { Photoshop } from 'vue-color'
 
 
  
  export default {
      name: 'Layer',
      components: {
-         VueDraggableResizable, Character,
+         VueDraggableResizable,
+         Character,
+         'photoshop-picker': Photoshop,
+         /* 'material-picker': material,
+          * 'compact-picker': compact,
+          * 'swatches-picker': swatches,
+          * 'slider-picker': slider,
+          * 'sketch-picker': sketch,
+          * 'chrome-picker': chrome,*/
      },
      props: {
          layer : {
@@ -104,6 +118,8 @@
      data() {
          return {
              isEditing: false,
+             isColorPickerVisible: false,
+             tempColor: this.layer.color,
          };
      },
      methods: {
@@ -124,6 +140,18 @@
          onResize(x,y,w,h){
              //if the top/left resizer handles are moved, x and y also change
              this.updatePosSize(x,y,w,h);
+         },
+         updateTempColor(chosenColor){
+             this.tempColor = chosenColor.hex;
+         },
+         okColorPicker(){
+             this.layer.color = this.tempColor;
+             this.isColorPickerVisible = !this.isColorPickerVisible;
+         },
+         cancelColorPicker(){
+             //on cancel, reset the temp color to the last color
+             this.tempColor = this.layer.color;
+             this.isColorPickerVisible = !this.isColorPickerVisible;
          },
          upload(input){
              var self = this;
@@ -194,12 +222,12 @@
  @mixin ratio($x: 1, $y: 1, $contentselector: ".nothing"){
      position: relative;
      &:before {
-	 content: ""; display: block;
-	 padding-top: percentage($y/$x);
-	 pointer-events: none;
+	       content: ""; display: block;
+	       padding-top: percentage($y/$x);
+	       pointer-events: none;
      }
      #{unquote($contentselector)} {
-	 position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+	       position: absolute; top: 0; left: 0; bottom: 0; right: 0;
      }
  }
  @mixin img($xRatio: 1, $yRatio: 1){
@@ -296,5 +324,16 @@
          .icon-default { display: none; }
          .icon-editing { display: inline-block; }
      }
+ }
+ .toggle-colorpicker-btn {
+     -webkit-appearance: none; @include size(15px); padding: 0;
+     border: 1px solid #d8d8d8;
+ }
+ .colorpicker-wrapper {
+     position: relative;
+ }
+ .colorpicker {
+     /* @include abs(0); */
+     position: fixed; right: 15px; top: 15px; z-index: 1000;
  }
 </style>

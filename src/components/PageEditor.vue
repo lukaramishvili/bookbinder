@@ -1,39 +1,39 @@
 <template v-if="isLoaded">
   <!-- if we point data-preview-mode to the boolean preview_mode without .toString(), it will omit the data-preview-mode attribute entirely when preview_mode is false -->
-    <div class="page-editor" :data-page-id="page.id" :data-preview-mode="preview_mode.toString()" :style="'background-image: url('+page.scene_bg+');'">
-        <div class="page-editor-actions">
-            <div style="float:left; font-size: 12px;">
-                ბიჭი/გოგო
-                <select class="select-preview-gender" v-model="previewGender">
-                    <option value="none" selected="selected">ყველა</option>
-                    <option value="boy">ბიჭი</option>
-                    <option value="girl">გოგო</option>
-                </select>
-            </div>
-            <select class="select-new-layer-type" v-model="newLayerType">
-                <option value="text">ტექსტური</option>
-                <option value="image">სურათი</option>
-                <option value="character">პერსონაჟი</option>
-            </select>
-            <select v-if="newLayerType == 'character'" :value="newCharacterId" @input="newCharacterId = parseInt($event.target.value);">
-                <option value="">--- აირჩიეთ პერსონაჟი ---</option>
-                <option v-for="char in allCharacters" v-bind="char" :value="char.post.ID">{{ char.post.post_title }}</option>
-            </select>
-            <button type="button" class="add-btn" @click="addLayer(newLayerType)">დამატება</button>
-            <button type="button" class="save-btn" @click="save()">დამახსოვრება</button>
-            <button type="button" class="save-btn" @click="toggleFullscreen()">
-                <i class="fa fa-compress fs-collapse-btn"></i>
-                <i class="fa fa-expand fs-expand-btn"></i>
-                <template v-if="isFullscreen">დახურვა</template>
-                <template v-else>მთელ ეკრანზე</template>
-            </button>
-        </div>
-        <template v-if="showLayers">
-            <template v-for="(l, indexL) in page.layers" v-bind="l">
-                <Layer :layer="l" @remove-layer="removeLayer(indexL)" @arrange="arrangeLayer(l, ...arguments)"></Layer>
-            </template>
-        </template>
+  <div class="page-editor" :data-page-id="page.id" :data-preview-mode="preview_mode.toString()" :style="'background-image: url('+page.scene_bg+');'">
+    <div class="page-editor-actions">
+      <div style="float:left; font-size: 12px;">
+        ბიჭი/გოგო
+        <select class="select-preview-gender" v-model="previewGender">
+          <option value="none" selected="selected">ყველა</option>
+          <option value="boy">ბიჭი</option>
+          <option value="girl">გოგო</option>
+        </select>
+      </div>
+      <select class="select-new-layer-type" v-model="newLayerType">
+        <option value="text">ტექსტური</option>
+        <option value="image">სურათი</option>
+        <option value="character">პერსონაჟი</option>
+      </select>
+      <select v-if="newLayerType == 'character'" :value="newCharacterId" @input="newCharacterId = parseInt($event.target.value);">
+        <option value="">--- აირჩიეთ პერსონაჟი ---</option>
+        <option v-for="char in allCharacters" v-bind="char" :value="char.post.ID">{{ char.post.post_title }}</option>
+      </select>
+      <button type="button" class="add-btn" @click="addLayer(newLayerType)">დამატება</button>
+      <button type="button" class="save-btn" @click="save()">დამახსოვრება</button>
+      <button type="button" class="save-btn" @click="toggleFullscreen()">
+        <i class="fa fa-compress fs-collapse-btn"></i>
+        <i class="fa fa-expand fs-expand-btn"></i>
+        <template v-if="isFullscreen">დახურვა</template>
+        <template v-else>მთელ ეკრანზე</template>
+      </button>
     </div>
+    <template v-if="showLayers">
+      <template v-for="(l, indexL) in page.layers" v-bind="l">
+        <Layer :layer="l" @remove-layer="removeLayer(indexL)" @arrange="arrangeLayer(l, ...arguments)"></Layer>
+      </template>
+    </template>
+  </div>
 </template>
 
 <script>
@@ -158,7 +158,7 @@
                  id: id ? id : (maxLayerId + 1), type: layerType, name: 'new1',
                  x: Math.round(Math.random()*70), y: Math.round(Math.random()*30),
                  w:180, h:130,
-                 z: this.zNewLayer(), bg: Colors.hexRandom(),
+                 z: this.zNewLayer(), bg: Colors.hexRandom(), color: '#ffffff',
                  characterId: null, textContent: '', imgSrc: '',
              };
          },
