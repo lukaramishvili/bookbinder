@@ -189,11 +189,21 @@
              }, 0);
          },
          arrangeLayer(layer, direction, moveFurthest){
+             var zCur = layer.z;
+             var zDest;
              if(direction == 'up'){
-                 layer.z = 1 + (moveFurthest ? this.zMax() : layer.z);
+                 //move this layer 1 level up
+                 zDest = 1 + (moveFurthest ? this.zMax() : layer.z);
              } else {
-                 layer.z = Math.max(1, -1 + (moveFurthest ? this.zMin() : layer.z));
+                 //move this layer 1 level down
+                 zDest = Math.max(1, -1 + (moveFurthest ? this.zMin() : layer.z));
              }
+             //if a layer already exists on this z position, swap z-indices
+             this.page.layers
+                 .filter(l => l.z == zDest)
+                 .map(l => { l.z = zCur; });
+             //move the current layer itself
+             layer.z = zDest;
          },
          getWorkingAreaWidth(){
              return document.querySelector('.page-editor').offsetWidth;
