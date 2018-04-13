@@ -3,7 +3,7 @@
   <vue-draggable-resizable
       :x="this.$parent.horRelToAbs(layer.x)" :y="this.$parent.verRelToAbs(layer.y)" :w="this.$parent.horRelToAbs(layer.w)" :h="this.$parent.verRelToAbs(layer.h)" :parent="true"
       :class="(isEditing ? ' is-editing ' : '') + (isVisible ? '' : ' hidden ')" :style="'z-index: '+layer.z+'; '"
-      :drag-handle="'.drag-handle'" @resizing="onResize" @dragging="onDrag">
+      :drag-handle="'.drag-handle'" @resizing="onResize" @dragging="onDragging">
     <div class="drag-handle">
       <i class="fa fa-arrows-alt"></i>
     </div>
@@ -126,6 +126,18 @@
          invertColor(color){
              return Colors.invert(color, true);
          },
+         updatePos(x,y){
+             [this.layer.x, this.layer.y] = [
+                 this.$parent.horAbsToRel(x),
+                 this.$parent.verAbsToRel(y),
+             ];
+         },
+         updateSize(w,h){
+             [this.layer.w, this.layer.h] = [
+                 this.$parent.horAbsToRel(w),
+                 this.$parent.verAbsToRel(h),
+             ];
+         },
          updatePosSize(x,y,w,h){
              [this.layer.x, this.layer.y, this.layer.w, this.layer.h] = [
                  this.$parent.horAbsToRel(x),
@@ -134,8 +146,8 @@
                  this.$parent.verAbsToRel(h),
              ];
          },
-         onDrag(x,y,w,h){
-             this.updatePosSize(x,y,w,h);
+         onDragging(x,y){
+             this.updatePos(x,y);
          },
          onResize(x,y,w,h){
              //if the top/left resizer handles are moved, x and y also change
