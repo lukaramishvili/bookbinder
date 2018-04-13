@@ -253,7 +253,10 @@
                      //we're clearing tempUpload's file contents but leaving other upload info for the upload script (index, file name, etc). the upload php code will delete it
                      delete l_to_submit.tempUpload.file;
                  }
-                 l_to_submit.textContent = l_to_submit.textContent.replace(new RegExp('"', 'gi'), '\\"');
+                 //l_to_submit.textContent = l_to_submit.textContent.replace(new RegExp('"', 'gi'), '\\"');
+                 // base64-encode; encoding quotes still didn't work in some cases
+                 // base64 needs Latin1 encoding, so urlencode before base64-encoding
+                 l_to_submit.textContent = btoa(encodeURIComponent(l_to_submit.textContent));
                  return l_to_submit;
              });
              //directly appending to formData results in [object Object]
