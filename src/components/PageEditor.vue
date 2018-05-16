@@ -157,7 +157,7 @@
              return {
                  id: id ? id : (maxLayerId + 1), type: layerType, name: 'new1',
                  x: Math.round(Math.random()*70), y: Math.round(Math.random()*30),
-                 w:180, h:130,
+                 w:180, h:130, fz: 24,/* 1fz here = 1/10vw, also in bookbuilder plugin*/
                  z: this.zNewLayer(), bg: Colors.hexRandom(), color: '#ffffff',
                  characterId: null, textContent: '', imgSrc: '',
              };
@@ -295,10 +295,10 @@
 <style lang="scss">
 /* when edit mode is turned off, hide editor elements */
 %hidden {
-  /* on .page-editor, display: none causes weird Invalid prop validation errors */
-  display: none !important; pointer-events: none !important;
+    /* on .page-editor, display: none causes weird Invalid prop validation errors */
+    display: none !important; pointer-events: none !important;
 }
-  .page-editor[data-preview-mode="true"] {
+.page-editor[data-preview-mode="true"] {
     margin: 0 !important;
     .page-editor-actions,
     .drag-handle,
@@ -309,7 +309,7 @@
       @extend %hidden;
     }
     .draggable { border: 0; }
-  }
+}
 </style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">

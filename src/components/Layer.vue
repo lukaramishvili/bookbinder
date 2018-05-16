@@ -18,17 +18,20 @@
       order: {{layer.z}}
       სქესი:
       <br>
+      <select v-model="layer.gender">
+        <option value="all" selected="selected">ყველა</option>
+        <option value="boy">ბიჭი</option>
+        <option value="girl">გოგო</option>
+      </select>
+      <br>
       <button type="button" class="toggle-colorpicker-btn" @click="isColorPickerVisible = !isColorPickerVisible" :style="'background-color: ' + layer.color + ';'"></button>
       <div class="colorpicker-wrapper" :style="isColorPickerVisible ? 'display: block' : 'display: none'">
         <!-- <photoshop-picker v-model="layer.color" class="colorpicker" /> -->
         <photoshop-picker :value="tempColor" class="colorpicker" @input="updateTempColor" @ok="okColorPicker" @cancel="cancelColorPicker" />
       </div>
       <br>
-      <select v-model="layer.gender">
-        <option value="all" selected="selected">ყველა</option>
-        <option value="boy">ბიჭი</option>
-        <option value="girl">გოგო</option>
-      </select>
+      ფონტი:
+      <input type="number" v-model="layer.fz" size="2" class="input-font-size" />
     </div>
     <button type="button" class="actions-btn" onclick="this.nextElementSibling.style.display = window.getComputedStyle(this.nextElementSibling).display === 'block' ? 'none' : 'block';">
       <i class="fa fa-bars"></i>
@@ -57,7 +60,7 @@
     <!-- end of pos:abs action buttons; start content -->
     <div class="draggable-content">
       <template v-if="layer.type == 'text'">
-        <div v-html="layer.textContent" :style="'color: ' + layer.color + ';'"></div>
+        <div v-html="layer.textContent" :style="'color: ' + layer.color + ';' + 'font-size: '+(layer.fz/10)+'vw; '"></div>
       </template>
       <template v-if="layer.type == 'image'">
         <div v-if="layer.imgSrc" class="layer-img-preview" :style="'background-image: url('+layer.imgSrc+');'"></div>
@@ -69,7 +72,7 @@
     </div>
     <div class="draggable-editor">
       <template v-if="layer.type == 'text'">
-        <wysiwyg v-model="layer.textContent"></wysiwyg>
+        <wysiwyg v-model="layer.textContent" :style="'color: ' + layer.color + ';' + 'font-size: '+(layer.fz/10)+'vw; '"></wysiwyg>
       </template>
       <template v-if="layer.type == 'image'">
         <input :id="'imgLayerUpload-'+layer.id" type="file" @change="upload($event.target)" class="layer-upload-input" />
@@ -218,11 +221,30 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
+@font-face {
+  font-family: "GARayuela-Bold";
+  src: url("http://bookulus.ge/p/fonts/garayuela-bold/GARayuela-Bold.eot?#iefix") format("embedded-opentype"),  url("http://bookulus.ge/p/fonts/garayuela-bold/GARayuela-Bold.otf")  format("opentype"),
+	     url("http://bookulus.ge/p/fonts/garayuela-bold/GARayuela-Bold.woff") format("woff"), url("http://bookulus.ge/p/fonts/garayuela-bold/GARayuela-Bold.ttf")  format("truetype"), url("http://bookulus.ge/p/fonts/garayuela-bold/GARayuela-Bold.svg#GARayuela-Bold") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+.draggable-content > *, .editr { font-family: "GARayuela-Bold"; font-size: 2.4vw; }
  /* need to be unscoped - .handle's are inside .vue-draggable */
  .draggable {
      &.hidden { display: none !important; }
      /* handles are awkward when editing content */
      &.is-editing { .handle { visibility: hidden; } }
+ }
+ /* this code didn't work below, inside .draggable-content .editr &-.. */
+ .editr {
+     /* add 1px margin to avoid changing dimensions due to border */
+     border-top: 0; margin-left: -1px; margin-right: -1px; width: calc(100% + 2px);
+ }
+ .editr--toolbar {
+     position: absolute; left: 0; bottom: 100%;
+ }
+ .editr--content {
+     line-height: inherit; padding: 0px;
  }
 </style>
 <style scoped lang="scss">
@@ -269,8 +291,9 @@
          @include size(100%);
      }
      &-editor {
+         width: 100%;
          .editr {
-             background-color: #fff;
+             /* background-color: #fff; */
          }
          display: none;
      }
@@ -347,5 +370,8 @@
  .colorpicker {
      /* @include abs(0); */
      position: fixed; right: 15px; top: 15px; z-index: 1000;
+ }
+ .input-font-size {
+     width: 50px;
  }
 </style>
