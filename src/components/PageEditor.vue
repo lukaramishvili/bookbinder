@@ -157,7 +157,8 @@
              return {
                  id: id ? id : (maxLayerId + 1), type: layerType, name: 'new1',
                  x: Math.round(Math.random()*70), y: Math.round(Math.random()*30),
-                 w:180, h:130, fz: 24,/* 1fz here = 1/10vw, also in bookbuilder plugin*/
+                 //w/h are in % of .page-editor width/height
+                 w:15, h:30, fz: 24,/* 1fz here = 1/10vw, also in bookbuilder plugin*/
                  z: this.zNewLayer(), bg: Colors.hexRandom(), color: '#ffffff',
                  characterId: null, textContent: '', imgSrc: '',
              };
