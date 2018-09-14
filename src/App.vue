@@ -13,7 +13,7 @@
  } else {
      Vue.prototype.$apiBaseUrl = document.location.protocol + '//' + document.location.host + '/api';
  }
- 
+
  export default {
      name: 'App',
      components: {
@@ -57,7 +57,7 @@
      font-family: 'Avenir', Helvetica, Arial, sans-serif;
      -webkit-font-smoothing: antialiased;
      -moz-osx-font-smoothing: grayscale;
-     text-align: center;
+     text-align: left;
      color: #2c3e50;
  }
  @import "../node_modules/vue-wysiwyg/dist/vueWysiwyg.css";

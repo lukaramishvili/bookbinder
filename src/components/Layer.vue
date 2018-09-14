@@ -95,7 +95,7 @@
  import { Photoshop } from 'vue-color'
 
 
- 
+
  export default {
      name: 'Layer',
      components: {
@@ -241,7 +241,11 @@
      border-top: 0; margin-left: -1px; margin-right: -1px; width: calc(100% + 2px);
  }
  .editr--toolbar {
-     position: absolute; left: 0; bottom: 100%;
+   position: absolute; left: 0; bottom: 100%;
+   a {
+     vertical-align: top;
+     svg { vertical-align: top; }
+   }
  }
  .editr--content {
      line-height: inherit; padding: 0px;

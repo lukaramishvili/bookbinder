@@ -42,7 +42,7 @@
  import fullscreen from 'vue-fullscreen'
  import Vue from 'vue'
  Vue.use(fullscreen)
- 
+
  export default {
      name: 'PageEditor',
      components: {
@@ -294,23 +294,23 @@
 
 <!-- this style is not scoped to allow styling everything -->
 <style lang="scss">
-/* when edit mode is turned off, hide editor elements */
-%hidden {
-    /* on .page-editor, display: none causes weird Invalid prop validation errors */
-    display: none !important; pointer-events: none !important;
-}
-.page-editor[data-preview-mode="true"] {
-    margin: 0 !important;
-    .page-editor-actions,
-    .drag-handle,
-    .draggable .handle,
-    .info-btn,
-    .actions-btn,
-    .toggle-edit-mode-btn {
-      @extend %hidden;
-    }
-    .draggable { border: 0; }
-}
+  /* when edit mode is turned off, hide editor elements */
+  %hidden {
+      /* on .page-editor, display: none causes weird Invalid prop validation errors */
+      display: none !important; pointer-events: none !important;
+  }
+  .page-editor[data-preview-mode="true"] {
+      margin: 0 !important;
+      .page-editor-actions,
+      .drag-handle,
+      .draggable .handle,
+      .info-btn,
+      .actions-btn,
+      .toggle-edit-mode-btn {
+          @extend %hidden;
+      }
+      .draggable { border: 0; }
+  }
 </style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
@@ -339,11 +339,15 @@
      @include ratio(2.83);
      &-actions {
          @include abs(0, calc(100% + 5px)); width: 100%; text-align: center;
+         padding: 0 15px;
      }
- }
- .select-new-layer-type {
-     
- }
+     &:-webkit-full-screen {
+         .page-editor-actions { top: auto; bottom: 5px; color:#fff; }
+     }
+  }
+  .select-new-layer-type {
+
+  }
  .add-btn {
  }
  .save-btn {
