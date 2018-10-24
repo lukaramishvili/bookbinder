@@ -1,9 +1,10 @@
 <template>
   <!-- +'background: '+layer.bg+'; color: '+invertColor(layer.bg)+';' -->
   <vue-draggable-resizable
-      :x="this.$parent.horRelToAbs(layer.x)" :y="this.$parent.verRelToAbs(layer.y)" :w="this.$parent.horRelToAbs(layer.w)" :h="this.$parent.verRelToAbs(layer.h)" :parent="true"
-      :class="(isEditing ? ' is-editing ' : '') + (isVisible ? '' : ' hidden ')" :style="'z-index: '+layer.z+'; '"
-      :drag-handle="'.drag-handle'" @resizing="onResize" @dragging="onDragging">
+    :x="this.$parent.horRelToAbs(layer.x)" :y="this.$parent.verRelToAbs(layer.y)" :w="this.$parent.horRelToAbs(layer.w)" :h="this.$parent.verRelToAbs(layer.h)" :parent="true"
+    :class="(isEditing ? ' is-editing ' : '') + (isVisible ? '' : ' hidden ')" :style="'z-index: '+layer.z+'; '"
+    :drag-handle="'.drag-handle'" @resizing="onResize" @dragging="onDragging"
+    :key="rerenderKey">
     <div class="drag-handle">
       <i class="fa fa-arrows-alt"></i>
     </div>
@@ -11,27 +12,36 @@
       <i class="fa fa-info-circle"></i>
     </button>
     <div class="info">
-      #{{layer.id}}
-      <br>
-      type: {{ layer.type }}
-      <input v-model="layer.name" size="5" />
-      order: {{layer.z}}
+      #{{layer.id}}.
+      ტიპი: {{ layer.type }}.
+      სახელი: <input v-model="layer.name" size="5" />
+      <br />
+      თანმიმდ.: {{layer.z}}.
       სქესი:
-      <br>
       <select v-model="layer.gender">
         <option value="all" selected="selected">ყველა</option>
         <option value="boy">ბიჭი</option>
         <option value="girl">გოგო</option>
       </select>
-      <br>
+      <br />
+      ფერი:
       <button type="button" class="toggle-colorpicker-btn" @click="isColorPickerVisible = !isColorPickerVisible" :style="'background-color: ' + layer.color + ';'"></button>
       <div class="colorpicker-wrapper" :style="isColorPickerVisible ? 'display: block' : 'display: none'">
         <!-- <photoshop-picker v-model="layer.color" class="colorpicker" /> -->
         <photoshop-picker :value="tempColor" class="colorpicker" @input="updateTempColor" @ok="okColorPicker" @cancel="cancelColorPicker" />
       </div>
-      <br>
       ფონტი:
       <input type="number" v-model="layer.fz" size="2" class="input-font-size" />
+      <br />
+      X:
+      <input type="text" v-model="layer.x" size="2" class="input-percent" @change="rerenderKey = Math.random()" />%
+      Y:
+      <input type="text" v-model="layer.y" size="2" class="input-percent" @change="rerenderKey = Math.random()" />%
+      <br />
+      W:
+      <input type="text" v-model="layer.w" size="2" class="input-percent" @change="rerenderKey = Math.random()" />%
+      H:
+      <input type="text" v-model="layer.h" size="2" class="input-percent" @change="rerenderKey = Math.random()" />%
     </div>
     <button type="button" class="actions-btn" onclick="this.nextElementSibling.style.display = window.getComputedStyle(this.nextElementSibling).display === 'block' ? 'none' : 'block';">
       <i class="fa fa-bars"></i>
@@ -123,6 +133,7 @@
              isEditing: false,
              isColorPickerVisible: false,
              tempColor: this.layer.color,
+             rerenderKey: 1,
          };
      },
      methods: {
@@ -350,8 +361,9 @@
      }
  }
  .info {
+     padding: 5px; line-height: 2;
      &-btn { @extend %extra-btn; @include abs(calc(100% + 1px), 0); }
-     @include abs(calc(100% + 1px), 23px); width: 60px;
+     @include abs(calc(100% + 1px), 23px); width: 200px;
      /* background: inherit; color: inherit; */ background: #fff; color: gray;
      font-size: 12px; border-radius: 2px;
      display: none;
@@ -377,5 +389,8 @@
  }
  .input-font-size {
      width: 50px;
+ }
+ .input-percent {
+ width: 50px;
  }
 </style>

@@ -16,7 +16,7 @@ Vue.use(wysiwyg, {}); // config is optional. more below
 
 
 /* eslint-disable no-new */
-new Vue({
+var vm = new Vue({
   el: '#app',
     components: { App, wysiwyg },
   template: '<App/>'
