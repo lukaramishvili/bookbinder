@@ -11,6 +11,14 @@
             <option value="girl">გოგო</option>
           </select>
         </div>
+        <div style="float:left; font-size: 12px;">
+          კანის ფერი
+          <select class="select-preview-skin" v-model="previewSkin">
+            <option value="none" selected="selected">ყველა</option>
+            <option value="light">ღია</option>
+            <option value="dark">მუქი</option>
+          </select>
+        </div>
         <select class="select-new-layer-type" v-model="newLayerType">
           <option value="text">ტექსტური</option>
           <option value="image">სურათი</option>
@@ -77,12 +85,13 @@
              showLayers: true,//for redrawing
              newLayerType: 'text',//default selection
              previewGender: 'none',
+             previewSkin: 'none',
              newCharacterId: '',//selected
              allCharacters: [],
              page: {},
          };
      },
-     mounted() {
+      mounted() {
          this.fetchData();
          this.fixFullscreenIcons();
          window.addEventListener('resize', this.onResize);
@@ -293,7 +302,9 @@
      },
      computed: {
          isPreviewModeOn: function(){
-             return !(this.previewGender == 'none' || this.previewGender == 'all');
+             var specificGenderSelected = !(this.previewGender == 'none' || this.previewGender == 'all');
+             var specificSkinSelected = !(this.previewSkin == 'none' || this.previewSkin == 'all');
+             return specificGenderSelected || specificSkinSelected;
          },
      }
  }

@@ -24,6 +24,13 @@
         <option value="girl">გოგო</option>
       </select>
       <br />
+      კანის ფერი:
+      <select v-model="layer.skin">
+        <option value="all" selected="selected">ყველა</option>
+        <option value="light">ღია</option>
+        <option value="dark">მუქი</option>
+      </select>
+      <br />
       ფერი:
       <button type="button" class="toggle-colorpicker-btn" @click="isColorPickerVisible = !isColorPickerVisible" :style="'background-color: ' + layer.color + ';'"></button>
       <div class="colorpicker-wrapper" :style="isColorPickerVisible ? 'display: block' : 'display: none'">
@@ -214,14 +221,23 @@
      },
      computed: {
          isVisibleInPreview: function(){
-             var preview = this.$parent.previewGender;
+             var previewGender = this.$parent.previewGender;
+             var previewSkin = this.$parent.previewSkin;
              //show only when: empty gender value on layer (meaning non-gender-specific)
-             return !('gender' in this.layer)
+             var showByGender = !('gender' in this.layer)
                  || this.layer.gender == ''
              //selected all-gender value on layer
                  || this.layer.gender == 'all'
              //matching the preview gender
-                 || this.layer.gender == preview;
+                 || this.layer.gender == previewGender;
+             //show only when: empty skin value on layer (meaning non-skin-specific)
+             var showBySkin = !('skin' in this.layer)
+                 || this.layer.skin == ''
+             //selected all-skin value on layer
+                 || this.layer.skin == 'all'
+             //matching the preview skin
+                 || this.layer.skin == previewSkin;
+             return showByGender && showBySkin;
          },
          isVisible: function(){
              return this.$parent.isPreviewModeOn ? this.isVisibleInPreview : true;
