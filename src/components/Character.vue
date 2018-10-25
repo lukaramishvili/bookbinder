@@ -1,18 +1,21 @@
 <template v-if="isLoaded">
 
-    <div class="character">
-        <template v-for="attr in character.attributes" v-bind="attr">
-            <template v-if="attr.component_enable=='1'">
-                <div class="character-attr">
-                    <template v-for="opt in attr.options" v-bind="opt">
-                        <template v-if="opt.option_enable=='1' && opt.option_default=='1'">
-                            <div class="character-opt" :style="'background-image: url('+opt.option_image+')'"></div>
-                        </template>
-                    </template>
-                </div>
+  <div class="character">
+    <template v-for="attr in character.attributes" v-bind="attr">
+      <template v-if="attr.component_enable=='1'">
+        <div class="character-attr">
+          <template v-for="opt in attr.options" v-bind="opt">
+            <template v-if="opt.option_enable=='1' && opt.option_default=='1'">
+              <!--  :style="'background-image: url('+opt.option_image+')'" -->
+              <div class="character-opt">
+                <img :src="opt.option_image" />
+              </div>
             </template>
-        </template>
-    </div>
+          </template>
+        </div>
+      </template>
+    </template>
+  </div>
 
 </template>
 
@@ -80,12 +83,16 @@
  /*  */
  .character {
      position: relative;
-     width: 100%; @include ratio(6, 7); /* @include size(100%); */
+     width: 100%; /* @include ratio(6, 7); */ /* @include size(100%); */
      &-attr {
-         @include abs(0,0); @include size(100%);
+         @include abs(0,0); @include size(100%, auto);
+         &:first-child { position: static; }
      }
      &-opt {
-         @include abs(0,0); @include size(100%); @include img();
+         /* @include abs(0,0); */ @include size(100%, auto); /* @include img(); */
+         img {
+             width: 100%; height: auto;
+         }
      }
  }
 </style>

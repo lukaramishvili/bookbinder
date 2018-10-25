@@ -221,8 +221,9 @@
          //the reverse
          horAbsToRel(horDimAbs){ return 100*horDimAbs/this.getWorkingAreaWidth(); },
          verAbsToRel(verDimAbs){ return 100*verDimAbs/this.getWorkingAreaHeight(); },
-         removePreTag(htmlText){
-             return htmlText.replace(new RegExp('</?pre.*?>', 'ugi'), '');
+         removeWysiwygTags(htmlText){
+             return htmlText.replace(new RegExp('</?pre.*?>', 'ugi'), '')
+                            .replace(new RegExp('</?span.*?>', 'ugi'), '');
          },
          save(){
              var self = this;
@@ -263,7 +264,7 @@
                  // base64-encode; encoding quotes still didn't work in some cases
                  // base64 needs Latin1 encoding, so urlencode before base64-encoding
                  // the editor still adds <pre style=""> tag with gibberish
-                 l_to_submit.textContent = btoa(encodeURIComponent(this.removePreTag(l_to_submit.textContent)));
+                 l_to_submit.textContent = btoa(encodeURIComponent(this.removeWysiwygTags(l_to_submit.textContent)));
                  return l_to_submit;
              });
              //directly appending to formData results in [object Object]
