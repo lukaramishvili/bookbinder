@@ -80,7 +80,10 @@
         <div v-html="layer.textContent" :style="'color: ' + layer.color + ';' + 'font-size: '+(layer.fz/10)+'vw; '"></div>
       </template>
       <template v-if="layer.type == 'image'">
-        <div v-if="layer.imgSrc" class="layer-img-preview" :style="'background-image: url('+layer.imgSrc+');'"></div>
+        <!-- :style="'background-image: url('+layer.imgSrc+');'" -->
+        <div v-if="layer.imgSrc" class="layer-img-preview">
+          <img :src="layer.imgSrc" />
+        </div>
         <div v-else class="layer-img-placeholder">Image here</div>
       </template>
       <template v-else-if="layer.type == 'character'">
@@ -363,7 +366,8 @@
          color: #fff;
      }
      &-img-preview {
-         @include abs(0); @include size(100%); @include img();
+         @include abs(0); @include size(100%); /* @include img(); */
+         img { /*@include abs(0);*/ display: block; width: 100%; height: auto; }
      }
  }
  .actions {
