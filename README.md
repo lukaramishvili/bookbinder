@@ -1,4 +1,4 @@
-# bookulus
+# bookbinder
 
 > Book layout management
 
