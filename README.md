@@ -1,16 +1,17 @@
 # bookbinder
 
-> Book layout design software (designed books are ready for commercial printing)
-> Per-customer placeholders allow automatically personalizing the books for each customer
-> Can be used for any type of layer-based vector/bitmap design
+> * Book layout design software (designed books are ready for commercial printing)
+> * Per-customer placeholders allow automatically personalizing the books for each customer
+> * Can be used for any type of layer-based vector/bitmap design
 
 # Features
 
-> No DPI restriction
-> Placeholders for personalizeable content
-> Automatization of personalized content generation
-> Double-sided book support
-> Customizeable gutters/margins (requires support on backend side)
+> * No DPI restriction
+> * Placeholders for personalizeable content
+> * Automatization of personalized content generation
+> * Double-sided book support
+> * Customizeable gutters/margins (requires support on backend side)
+> * Fullscreen editor
 
 ## Build Setup (Vue / npm scripts)
 
