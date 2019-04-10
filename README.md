@@ -1,8 +1,18 @@
 # bookbinder
 
-> Book layout management
+> Book layout design software (designed books are ready for commercial printing)
+> Per-customer placeholders allow automatically personalizing the books for each customer
+> Can be used for any type of layer-based vector/bitmap design
 
-## Build Setup
+# Features
+
+> No DPI restriction
+> Placeholders for personalizeable content
+> Automatization of personalized content generation
+> Double-sided book support
+> Customizeable gutters/margins (requires support on backend side)
+
+## Build Setup (Vue / npm scripts)
 
 ``` bash
 # install dependencies
@@ -27,4 +37,3 @@ npm run e2e
 npm test
 ```
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
